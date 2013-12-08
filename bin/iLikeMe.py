@@ -2,8 +2,10 @@
 
 from sys import exit
 from os import listdir, remove
+from string import lowercase
 from re import match
 from time import time, sleep, strftime, localtime
+from xml.dom import minidom
 from urllib2 import urlopen
 from urllib import urlencode
 from urlparse import parse_qs, urlparse
@@ -24,6 +26,16 @@ def get_url(path, args=None):
 
 def get(path, args=None):
     return urlopen(get_url(path=path, args=args)).read()
+
+def getPhrasesFromGoogle():
+    phrases = []
+    url = "http://google.com/complete/search?output=toolbar&"
+    query = "everyone will %s"
+    for letter in lowercase:
+        xml = minidom.parseString(urlopen(url+urlencode({'q':query%letter})).read())
+        for suggestion in xml.getElementsByTagName('suggestion'):
+            phrases.append(suggestion.attributes['data'].value)
+    return phrases
 
 def setup():
     secrets = {}
@@ -56,7 +68,6 @@ def setup():
             self.wfile.write("You have successfully logged in to facebook. "
                              "You can close this window now.")
 
-
     httpd = HTTPServer(('127.0.0.1', 8080), FacebookRequestHandler)
 
     print "Logging you in to facebook..."
@@ -80,6 +91,7 @@ def loop():
         remove(IMG_DIR+"/"+f)
 
 if __name__ == '__main__':
+    phrases = getPhrasesFromGoogle()
     graph = facebook.GraphAPI(setup())
     ## TODO: start oF app
 
