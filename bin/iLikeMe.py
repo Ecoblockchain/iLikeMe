@@ -5,6 +5,7 @@ from os import listdir, remove
 from string import lowercase
 from re import match
 from time import time, sleep, strftime, localtime
+from Queue import Queue
 from xml.dom import minidom
 from urllib2 import urlopen
 from urllib import urlencode
@@ -76,23 +77,25 @@ def setupOneApp(secrets):
 
 def setup():
     oauthDom = minidom.parse('./data/oauth.xml')
-    graphs = []
+    graphs = Queue()
     for app in oauthDom.getElementsByTagName('app'):
         secrets = {}
         secrets['APP_ID'] = app.attributes['app_id'].value
         secrets['APP_SECRET'] = app.attributes['app_secret'].value
-        graphs.append(facebook.GraphAPI(setupOneApp(secrets)))
+        graphs.put(facebook.GraphAPI(setupOneApp(secrets)))
     return graphs
 
 def loop():
     for f in filter(lambda x: match('^img\.[\w]+\.jpg$', x), listdir(IMG_DIR)):
-        album = graphs[0].put_object("me", "albums", name=str(f), message=" ")
+        graph = graphs.get()
+        album = graph.put_object("me", "albums", name=str(f), message=" ")
         imgFile = open(IMG_DIR+"/"+f)
-        photo = graphs[0].put_photo(image=imgFile, message=" ", album_id=int(album['id']))
-        graphs[0].put_object(photo['id'], "likes")
-        graphs[0].put_object(photo['post_id'], "likes")
+        photo = graph.put_photo(image=imgFile, message=" ", album_id=int(album['id']))
+        graph.put_object(photo['id'], "likes")
+        graph.put_object(photo['post_id'], "likes")
         imgFile.close()
         remove(IMG_DIR+"/"+f)
+        graphs.put(graph)
 
 if __name__ == '__main__':
     phrases = getPhrasesFromGoogle()
