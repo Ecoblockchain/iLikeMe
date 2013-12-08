@@ -37,14 +37,8 @@ def getPhrasesFromGoogle():
             phrases.append(suggestion.attributes['data'].value)
     return phrases
 
-def setup():
-    secrets = {}
+def setupOneApp(secrets):
     secrets['REDIRECT_URI'] = 'http://127.0.0.1:8080/'
-
-    inFile = open('./data/oauth.txt', 'r')
-    for line in inFile:
-        (k,v) = line.split()
-        secrets[k] = v
 
     class FacebookRequestHandler(BaseHTTPRequestHandler):
         def do_GET(self):
@@ -80,19 +74,29 @@ def setup():
 
     return secrets['ACCESS_TOKEN']
 
+def setup():
+    oauthDom = minidom.parse('./data/oauth.xml')
+    graphs = []
+    for app in oauthDom.getElementsByTagName('app'):
+        secrets = {}
+        secrets['APP_ID'] = app.attributes['app_id'].value
+        secrets['APP_SECRET'] = app.attributes['app_secret'].value
+        graphs.append(facebook.GraphAPI(setupOneApp(secrets)))
+    return graphs
+
 def loop():
     for f in filter(lambda x: match('^img\.[\w]+\.jpg$', x), listdir(IMG_DIR)):
-        album = graph.put_object("me", "albums", name=str(f), message=" ")
+        album = graphs[0].put_object("me", "albums", name=str(f), message=" ")
         imgFile = open(IMG_DIR+"/"+f)
-        photo = graph.put_photo(image=imgFile, message=" ", album_id=int(album['id']))        
-        graph.put_object(photo['id'], "likes")
-        graph.put_object(photo['post_id'], "likes")
+        photo = graphs[0].put_photo(image=imgFile, message=" ", album_id=int(album['id']))
+        graphs[0].put_object(photo['id'], "likes")
+        graphs[0].put_object(photo['post_id'], "likes")
         imgFile.close()
         remove(IMG_DIR+"/"+f)
 
 if __name__ == '__main__':
     phrases = getPhrasesFromGoogle()
-    graph = facebook.GraphAPI(setup())
+    graphs = setup()
     ## TODO: start oF app
 
     try:
