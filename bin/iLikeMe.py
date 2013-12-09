@@ -3,7 +3,7 @@
 from sys import exit
 from os import listdir, remove
 from string import lowercase
-from re import match
+from re import match, sub
 from time import time, sleep, strftime, localtime
 from Queue import Queue
 from xml.dom import minidom
@@ -11,6 +11,7 @@ from urllib2 import urlopen
 from urllib import urlencode
 from urlparse import parse_qs, urlparse
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from nltk import pos_tag
 import webbrowser
 import facebook
 
@@ -35,7 +36,15 @@ def getPhrasesFromGoogle():
     for letter in lowercase:
         xml = minidom.parseString(urlopen(url+urlencode({'q':query%letter})).read())
         for suggestion in xml.getElementsByTagName('suggestion'):
-            phrases.append(suggestion.attributes['data'].value)
+            phrase = sub(r'(will everyone)', 'everyone will', suggestion.attributes['data'].value)
+            taggedText = pos_tag(phrase.split())
+            sawVerb = False
+            phrase = ''
+            for (word,tag) in taggedText:
+                sawVerb |= tag.startswith('VB') and not (('please' in word) or ('everyone' in word))
+                phrase += word+' ' if sawVerb else ''
+            if not phrase == '':
+                phrases.append(sub(r'(lyric(s*))|(quote(s*))', '', phrase))
     return phrases
 
 def setupOneApp(secrets):
@@ -100,6 +109,7 @@ def loop():
 
 if __name__ == '__main__':
     phrases = getPhrasesFromGoogle()
+    exit(0)
     graphs = setup()
     ## TODO: start oF app
 
