@@ -52,7 +52,7 @@ def setupOneApp(secrets):
 
             if code is None:
                 self.wfile.write("Sorry, authentication failed.")
-                exit(1)
+                return
 
             response = get('/oauth/access_token', {'client_id':secrets['APP_ID'],
                                                    'redirect_uri':secrets['REDIRECT_URI'],
@@ -112,5 +112,3 @@ if __name__ == '__main__':
                 sleep(0.016 - loopTime)
     except KeyboardInterrupt :
         exit(0)
-
-
