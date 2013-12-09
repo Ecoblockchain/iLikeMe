@@ -88,6 +88,7 @@ def setup():
 def loop():
     for f in filter(lambda x: match('^img\.[\w]+\.jpg$', x), listdir(IMG_DIR)):
         graph = graphs.get()
+        name = str(graph.get_object("me")['name'])
         album = graph.put_object("me", "albums", name=str(f), message=" ")
         imgFile = open(IMG_DIR+"/"+f)
         photo = graph.put_photo(image=imgFile, message=" ", album_id=int(album['id']))
