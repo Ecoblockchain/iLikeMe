@@ -98,9 +98,9 @@ def setup():
 def loop():
     for f in filter(lambda x: match('^img\.[\w]+\.jpg$', x), listdir(IMG_DIR)):
         graph = graphs.get()
-        message = "In the future, everyone will %s for 15 minutes.  --%s" % 
-                  (choice(phrases), str(graph.get_object("me")['name']))
-        album = graph.put_object("me", "albums", name=str(f), message=" ")
+        message = "\"In the future, everyone will %s for 15 minutes.\"\n\n--%s"
+        message %= (choice(phrases), str(graph.get_object("me")['name']))
+        album = graph.put_object("me", "albums", name=str(f), message="me")
         imgFile = open(IMG_DIR+"/"+f)
         photo = graph.put_photo(image=imgFile, message=message, album_id=int(album['id']))
         graph.put_object(photo['id'], "likes")
