@@ -3,6 +3,7 @@
 from sys import exit
 from os import listdir, remove
 from string import lowercase
+from random import choice
 from re import match, sub
 from time import time, sleep, strftime, localtime
 from Queue import Queue
@@ -97,10 +98,11 @@ def setup():
 def loop():
     for f in filter(lambda x: match('^img\.[\w]+\.jpg$', x), listdir(IMG_DIR)):
         graph = graphs.get()
-        name = str(graph.get_object("me")['name'])
+        message = "In the future, everyone will %s for 15 minutes.  --%s" % 
+                  (choice(phrases), str(graph.get_object("me")['name']))
         album = graph.put_object("me", "albums", name=str(f), message=" ")
         imgFile = open(IMG_DIR+"/"+f)
-        photo = graph.put_photo(image=imgFile, message=" ", album_id=int(album['id']))
+        photo = graph.put_photo(image=imgFile, message=message, album_id=int(album['id']))
         graph.put_object(photo['id'], "likes")
         graph.put_object(photo['post_id'], "likes")
         imgFile.close()
@@ -109,7 +111,6 @@ def loop():
 
 if __name__ == '__main__':
     phrases = getPhrasesFromGoogle()
-    exit(0)
     graphs = setup()
     ## TODO: start oF app
 
