@@ -20,6 +20,7 @@ void iLikeMe::setup(){
 	thresholdValue = 40;
 
 	lastFaceTime = ofGetElapsedTimeMillis();
+    lastSavedTime = ofGetElapsedTimeMillis();
 	currentColorScheme = ColorScheme::getScheme(0);
 
 	for(int i=0; i<12; ++i){
@@ -199,6 +200,21 @@ void iLikeMe::draw(){
 		drawFace();
 		faceFbos[i].end();
 	}
+
+    // save one of the fbos
+    if((ofGetElapsedTimeMillis() - lastSavedTime > 500) && tracker.getFound()){
+        ofFbo saveFbo;
+        saveFbo.allocate((int)(mFaceFeatures.cropArea.width+1), (int)(mFaceFeatures.cropArea.height+1));
+        saveFbo.begin();
+        ofSetColor(255);
+        faceFbos[(int)ofClamp(ofRandom(12),0,11)].getTextureReference().drawSubsection(0, 0, mFaceFeatures.cropArea.width, mFaceFeatures.cropArea.height, 1,1);
+        saveFbo.end();
+        ofSetColor(255);
+        ofPixels mPix;
+        saveFbo.getTextureReference().readToPixels(mPix);
+        ofSaveImage(mPix, ofToDataPath("imgs/img."+ofToString(ofGetFrameNum())+".png"));
+        lastSavedTime = ofGetElapsedTimeMillis();
+    }
 
 	int i=0;
 	int cx=0, cy=0;

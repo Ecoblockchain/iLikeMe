@@ -47,7 +47,7 @@ public:
 	ofImage printLayer, hairLayer;
 	unsigned char thresholdValue;
 
-	long long int lastFaceTime;
+	long long int lastFaceTime, lastSavedTime;
 	ColorScheme currentColorScheme;
 
 	ofFbo faceFbos[12];
