@@ -96,7 +96,7 @@ def setup():
     return graphs
 
 def loop():
-    for f in filter(lambda x: match('^img\.[\w]+\.jpg$', x), listdir(IMG_DIR)):
+    for f in filter(lambda x: match('^img\.[\w]+\.png$', x), listdir(IMG_DIR)):
         graph = graphs.get()
         message = "\"In the future, everyone will %s for 15 minutes.\"\n\n--%s"
         message %= (choice(phrases), str(graph.get_object("me")['name']))
