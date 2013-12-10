@@ -203,16 +203,16 @@ void iLikeMe::draw(){
 
     // save one of the fbos
     if((ofGetElapsedTimeMillis() - lastSavedTime > 500) && tracker.getFound()){
-        ofFbo saveFbo;
-        saveFbo.allocate((int)(mFaceFeatures.cropArea.width+1), (int)(mFaceFeatures.cropArea.height+1));
-        saveFbo.begin();
-        ofSetColor(255);
-        faceFbos[(int)ofClamp(ofRandom(12),0,11)].getTextureReference().drawSubsection(0, 0, mFaceFeatures.cropArea.width, mFaceFeatures.cropArea.height, 1,1);
-        saveFbo.end();
-        ofSetColor(255);
-        ofPixels mPix;
-        saveFbo.getTextureReference().readToPixels(mPix);
-        ofSaveImage(mPix, ofToDataPath("imgs/img."+ofToString(ofGetFrameNum())+".png"));
+        float randomDraw = ofRandom(1.0);
+        if(randomDraw < 0.7){
+            saveImage(1);
+        }
+        else if(randomDraw < 0.9){
+            saveImage(2);
+        }
+        else{
+            saveImage(3);
+        }
         lastSavedTime = ofGetElapsedTimeMillis();
     }
 
@@ -267,6 +267,26 @@ void iLikeMe::makeBlackTransparent(ofxCvGrayscaleImage &in, ofImage &out){
 	out.update();
 }
 
+void iLikeMe::saveImage(int sqrtOfNumberOfFaces){
+    ofFbo saveFbo;
+    saveFbo.allocate(sqrtOfNumberOfFaces*mFaceFeatures.cropArea.width,
+                     sqrtOfNumberOfFaces*mFaceFeatures.cropArea.height);
+    saveFbo.begin();
+    ofSetColor(255);
+    int fboIndex = ((int)ofRandom(120))%12;
+    for(int i=0; i<sqrtOfNumberOfFaces; i++){
+        for(int j=0; j<sqrtOfNumberOfFaces; j++){
+            faceFbos[fboIndex].getTextureReference().drawSubsection(i*mFaceFeatures.cropArea.width, j*mFaceFeatures.cropArea.height,
+                                                                    mFaceFeatures.cropArea.width, mFaceFeatures.cropArea.height,
+                                                                    1,1);
+            fboIndex = (fboIndex+1)%12;
+        }
+    }
+    saveFbo.end();
+    ofPixels savePixels;
+    saveFbo.getTextureReference().readToPixels(savePixels);
+    ofSaveImage(savePixels, ofToDataPath("imgs/img."+ofToString(ofGetFrameNum())+".png"));
+}
 
 
 //--------------------------------------------------------------
