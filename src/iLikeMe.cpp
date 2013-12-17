@@ -21,6 +21,7 @@ void iLikeMe::setup(){
 
 	lastFaceTime = ofGetElapsedTimeMillis();
     lastSavedTime = ofGetElapsedTimeMillis();
+    savedCount = 0;
 	currentColorScheme = ColorScheme::getScheme(0);
 
 	for(int i=0; i<12; ++i){
@@ -35,6 +36,10 @@ void iLikeMe::setup(){
 
 //--------------------------------------------------------------
 void iLikeMe::update(){
+    if((ofGetElapsedTimeMillis() > 900000) || (savedCount > 800)){
+        std::exit(0);
+    }
+
 	cam.update();
 	if(cam.isFrameNew()) {
 		// face detection
@@ -286,6 +291,7 @@ void iLikeMe::saveImage(int sqrtOfNumberOfFaces){
     ofPixels savePixels;
     saveFbo.getTextureReference().readToPixels(savePixels);
     ofSaveImage(savePixels, ofToDataPath("imgs/img."+ofToString(ofGetFrameNum())+".png"));
+    savedCount++;
 }
 
 
