@@ -3,7 +3,7 @@
 from sys import exit
 from os import listdir, remove
 from string import lowercase
-from random import choice
+from random import choice, random
 from re import match, sub
 from time import time, sleep, strftime, localtime
 from Queue import Queue
@@ -96,11 +96,16 @@ def setup():
     return graphs
 
 def loop():
+    oldAlbum = None
     for f in filter(lambda x: match('^img\.[\w]+\.png$', x), listdir(IMG_DIR)):
         graph = graphs.get()
         message = "\"In the future, everyone will %s for 15 minutes.\"\n\n--%s"
         message %= (choice(phrases), str(graph.get_object("me")['name']))
-        album = graph.put_object("me", "albums", name=str(f), message="me")
+        if (oldAlbum is not None) and (random() < 0.4):
+            album = oldAlbum
+        else:
+            album = graph.put_object("me", "albums", name=str(f), message="me")
+            oldAlbum = album
         imgFile = open(IMG_DIR+"/"+f)
         photo = graph.put_photo(image=imgFile, message=message, album_id=int(album['id']))
         graph.put_object(photo['id'], "likes")
