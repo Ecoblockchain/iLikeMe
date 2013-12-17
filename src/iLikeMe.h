@@ -49,7 +49,8 @@ public:
 	unsigned char thresholdValue;
 
 	long long int lastFaceTime, lastSavedTime;
-    int savedCount;
+    ofDirectory imgsDir;
+
 	ColorScheme currentColorScheme;
 
 	ofFbo faceFbos[12];
