@@ -117,15 +117,18 @@ def loop():
 if __name__ == '__main__':
     phrases = getPhrasesFromGoogle()
     graphs = setup()
+    startTime = time()
     ## TODO: start oF app
 
     try:
-        while(True):
+        while(time()-startTime < 900):
             ## keep it from looping faster than ~60 times per second
             loopStart = time()
             loop()
             loopTime = time()-loopStart
             if (loopTime < 0.016):
                 sleep(0.016 - loopTime)
+        print "Your 15 minutes are over..."
+        exit(0)
     except KeyboardInterrupt :
         exit(0)
