@@ -2,6 +2,7 @@
 
 from sys import exit
 from os import listdir, remove
+from subprocess import Popen, PIPE
 from string import lowercase
 from random import choice, random
 from re import match, sub
@@ -117,8 +118,8 @@ def loop():
 if __name__ == '__main__':
     phrases = getPhrasesFromGoogle()
     graphs = setup()
+    Popen('./iLikeMe.app/Contents/MacOS/iLikeMe', stdout = PIPE, stderr = PIPE)
     startTime = time()
-    ## TODO: start oF app
 
     try:
         while(time()-startTime < 900):
