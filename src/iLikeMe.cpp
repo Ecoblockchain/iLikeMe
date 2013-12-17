@@ -202,7 +202,7 @@ void iLikeMe::draw(){
 	}
 
     // save one of the fbos
-    if((ofGetElapsedTimeMillis() - lastSavedTime > 500) && tracker.getFound()){
+    if((ofGetElapsedTimeMillis() - lastSavedTime > 1000) && tracker.getFound()){
         float randomDraw = ofRandom(1.0);
         if(randomDraw < 0.7){
             saveImage(1);
