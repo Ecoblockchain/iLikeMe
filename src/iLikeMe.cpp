@@ -36,10 +36,6 @@ void iLikeMe::setup(){
 
 //--------------------------------------------------------------
 void iLikeMe::update(){
-    if(ofGetElapsedTimeMillis() > 900000){
-        std::exit(0);
-    }
-
 	cam.update();
 	if(cam.isFrameNew()) {
 		// face detection
