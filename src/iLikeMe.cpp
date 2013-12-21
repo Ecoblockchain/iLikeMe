@@ -167,11 +167,11 @@ void iLikeMe::drawFace(){
 		
 		// RIGHT EYE
 		ofSetColor(currentColorScheme.eye);
-		ofCircle(mFaceFeatures.rightEye.getCentroid2D(), 0.3*min(mFaceFeatures.rightEye.getBoundingBox().getWidth(),mFaceFeatures.rightEye.getBoundingBox().getHeight()));
+		ofCircle(mFaceFeatures.rightEye.getCentroid2D(), 0.5*min(mFaceFeatures.rightEye.getBoundingBox().getWidth(),mFaceFeatures.rightEye.getBoundingBox().getHeight()));
 		
 		// LEFT EYE
 		ofSetColor(currentColorScheme.eye);
-		ofCircle(mFaceFeatures.leftEye.getCentroid2D(), 0.3*min(mFaceFeatures.leftEye.getBoundingBox().getWidth(),mFaceFeatures.leftEye.getBoundingBox().getHeight()));
+		ofCircle(mFaceFeatures.leftEye.getCentroid2D(), 0.5*min(mFaceFeatures.leftEye.getBoundingBox().getWidth(),mFaceFeatures.leftEye.getBoundingBox().getHeight()));
 		
 		// PRINT
 		ofSetColor(currentColorScheme.print);
