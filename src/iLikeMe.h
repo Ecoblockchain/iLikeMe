@@ -6,6 +6,8 @@
 #include "ofxFaceTracker.h"
 #include "ColorScheme.h"
 
+#define MAX_SAVED_PICTURE_DIMENSION 900
+
 class FaceFeatures{
 public:
 	ofPolyline face, outMouth, inMouth;
