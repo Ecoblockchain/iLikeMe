@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<apps>
+<!-- replace these with valid app_id and app_secret -->
+<app app_id="123456789101112" app_secret="abbccdd0124339b12344044ffedeacdd"/>
+</apps>
