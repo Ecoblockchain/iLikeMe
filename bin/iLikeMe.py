@@ -80,7 +80,7 @@ def setupOneApp(secrets):
     print "Logging you in to facebook..."
     webbrowser.open(get_url('/oauth/authorize', {'client_id':secrets['APP_ID'],
                                                  'redirect_uri':secrets['REDIRECT_URI'],
-                                                 'scope':'read_stream,publish_actions,publish_stream,photo_upload,user_photos'}))
+                                                 'scope':'read_stream,publish_actions,publish_stream,photo_upload,user_photos,status_update'}))
 
     while not 'ACCESS_TOKEN' in secrets:
         httpd.handle_request()
@@ -120,6 +120,7 @@ def loop():
                                 tags=dumps([{'x':50, 'y':50, 'tag_uid':userId}]))
         graph.put_object(photo['id'], "likes")
         graph.put_object(photo['post_id'], "likes")
+
         imgFile.close()
         remove(IMG_DIR+"/"+f)
         graphs.put(graph)
@@ -127,7 +128,7 @@ def loop():
 if __name__ == '__main__':
     phrases = getPhrasesFromGoogle()
     graphs = setup()
-    Popen('./iLikeMe.app/Contents/MacOS/iLikeMe', stdout = PIPE, stderr = PIPE)
+    ##Popen('./iLikeMe.app/Contents/MacOS/iLikeMe', stdout = PIPE, stderr = PIPE)
     startTime = time()
     userName = None
     userId = None
