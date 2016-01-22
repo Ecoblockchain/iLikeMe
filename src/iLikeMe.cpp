@@ -8,15 +8,15 @@ void iLikeMe::setup(){
 	ofEnableAlphaBlending();
 	cam.initGrabber(640, 480);
 
-	cImg.allocate(cam.width,cam.height);
-	grayDiff.allocate(cam.width,cam.height);
+	cImg.allocate(cam.getWidth(),cam.getHeight());
+	grayDiff.allocate(cam.getWidth(),cam.getHeight());
 	for(int i=0; i<2; ++i){
-		previousFrames[i].allocate(cam.width, cam.height);
+		previousFrames[i].allocate(cam.getWidth(), cam.getHeight());
 	}
 	previousFramesIndex = 0;
 
-	hairLayer.allocate(cam.width,cam.height, OF_IMAGE_COLOR_ALPHA);
-	printLayer.allocate(cam.width,cam.height, OF_IMAGE_COLOR_ALPHA);
+	hairLayer.allocate(cam.getWidth(),cam.getHeight(), OF_IMAGE_COLOR_ALPHA);
+	printLayer.allocate(cam.getWidth(),cam.getHeight(), OF_IMAGE_COLOR_ALPHA);
 	thresholdValue = 40;
 
 	lastFaceTime = ofGetElapsedTimeMillis();
@@ -25,9 +25,9 @@ void iLikeMe::setup(){
 	currentColorScheme = ColorScheme::getScheme(0);
 
 	for(int i=0; i<12; ++i){
-		faceFbos[i].allocate(cam.width, cam.height);
+		faceFbos[i].allocate(cam.getWidth(), cam.getHeight());
 	}
-	mFaceFeatures.cropArea.set(0,0,cam.width, cam.height);
+	mFaceFeatures.cropArea.set(0,0,cam.getWidth(), cam.getHeight());
 	scaleFactor = 1;
 
 	tracker.setup();
@@ -49,7 +49,7 @@ void iLikeMe::update(){
 		previousFramesIndex = (previousFramesIndex+1)%2;
 
 		// get new camera image
-		cImg.setFromPixels(cam.getPixelsRef());
+		cImg.setFromPixels(cam.getPixels());
 		grayDiff = cImg;
 		//grayDiff.blur();
 
@@ -106,7 +106,7 @@ void iLikeMe::drawFace(){
 		// draw shapes and color
 		// BACKGROUND
 		ofSetColor(currentColorScheme.background);
-		ofRect(0,0, cam.width,cam.height);
+		ofDrawRectangle(0,0, cam.getWidth(),cam.getHeight());
 		
 		// HAIR
 		ofSetColor(currentColorScheme.hair);
@@ -167,14 +167,14 @@ void iLikeMe::drawFace(){
 		
 		// RIGHT EYE
 		ofSetColor(currentColorScheme.eye);
-		ofCircle(mFaceFeatures.rightEye.getCentroid2D(), 0.5*min(mFaceFeatures.rightEye.getBoundingBox().getWidth(),
-                                                                 mFaceFeatures.rightEye.getBoundingBox().getHeight()));
+        ofDrawCircle(mFaceFeatures.rightEye.getCentroid2D(), 0.5*min(mFaceFeatures.rightEye.getBoundingBox().getWidth(),
+                                                                     mFaceFeatures.rightEye.getBoundingBox().getHeight()));
 		
 		// LEFT EYE
 		ofSetColor(currentColorScheme.eye);
-		ofCircle(mFaceFeatures.leftEye.getCentroid2D().x*0.96,
-                 mFaceFeatures.leftEye.getCentroid2D().y, 0.5*min(mFaceFeatures.leftEye.getBoundingBox().getWidth(),
-                                                                  mFaceFeatures.leftEye.getBoundingBox().getHeight()));
+		ofDrawCircle(mFaceFeatures.leftEye.getCentroid2D().x*0.96,
+                     mFaceFeatures.leftEye.getCentroid2D().y, 0.5*min(mFaceFeatures.leftEye.getBoundingBox().getWidth(),
+                                                                      mFaceFeatures.leftEye.getBoundingBox().getHeight()));
 		
 		// PRINT
 		ofSetColor(currentColorScheme.print);
@@ -192,7 +192,7 @@ void iLikeMe::draw(){
 	ofSetColor(255);
 
 	ofSetColor(255,255,0);
-	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, cam.height+20);
+	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, cam.getHeight()+20);
 	if(!(ofGetFrameNum()%60)){
 		cout << ofGetFrameRate() << endl;
 	}
@@ -225,7 +225,7 @@ void iLikeMe::draw(){
 		ofTranslate(cx,cy);
 		ofScale(s,s);
 		ofSetColor(255);
-		faceFbos[i].getTextureReference().drawSubsection(0, 0, mFaceFeatures.cropArea.width, mFaceFeatures.cropArea.height, 1,1);
+		faceFbos[i].getTexture().drawSubsection(0, 0, mFaceFeatures.cropArea.width, mFaceFeatures.cropArea.height, 1,1);
 		i = (i+1)%12;
 		cx = (cx+mFaceFeatures.cropArea.width*s);
 		if(cx > ofGetWidth()){
@@ -245,25 +245,25 @@ void FaceFeatures::blowUpPolyline(ofPolyline &pl){
 
 // destructive: changes incoming img
 void iLikeMe::thresholdCam(ofVideoGrabber &in, ofImage &out){
-	unsigned char *op = out.getPixels();
-	unsigned char *ip = in.getPixels();
-	for(int i=0; i<in.height*in.width; ++i){
+    ofPixels op = out.getPixels();
+    ofPixels ip = in.getPixels();
+	for(int i=0; i<in.getHeight()*in.getWidth(); ++i){
 		float gray = 0.21*float(ip[i*3+0]) + 0.71*float(ip[i*3+1]) + 0.07*float(ip[i*3+2]);
 		op[i*4+0] = op[i*4+1] = op[i*4+2] = (gray < thresholdValue)?255:0;
 		op[i*4+3] = (gray < thresholdValue)?255:0;
 	}
-	out.update();
+    out.setFromPixels(op);
 }
 
 // makes black pixels transparent
 void iLikeMe::makeBlackTransparent(ofxCvGrayscaleImage &in, ofImage &out){
-	unsigned char *ip = in.getPixels();
-	unsigned char *op = out.getPixels();
+    ofPixels op = out.getPixels();
+    ofPixels ip = in.getPixels();
 	for(int i=0; i<in.height*in.width; ++i){
 		op[i*4+0] = op[i*4+1] = op[i*4+2] = (ip[i] < 10)?0:255;
 		op[i*4+3] = (ip[i] < 10)?0:255;
 	}
-	out.update();
+    out.setFromPixels(op);
 }
 
 void iLikeMe::saveImage(int sqrtOfNumberOfFaces){
@@ -275,7 +275,7 @@ void iLikeMe::saveImage(int sqrtOfNumberOfFaces){
     int fboIndex = ((int)ofRandom(120))%12;
     for(int i=0; i<sqrtOfNumberOfFaces; i++){
         for(int j=0; j<sqrtOfNumberOfFaces; j++){
-            faceFbos[fboIndex].getTextureReference().drawSubsection(i*mFaceFeatures.cropArea.width, j*mFaceFeatures.cropArea.height,
+            faceFbos[fboIndex].getTexture().drawSubsection(i*mFaceFeatures.cropArea.width, j*mFaceFeatures.cropArea.height,
                                                                     mFaceFeatures.cropArea.width, mFaceFeatures.cropArea.height,
                                                                     1,1);
             fboIndex = (fboIndex+1)%12;
@@ -283,7 +283,7 @@ void iLikeMe::saveImage(int sqrtOfNumberOfFaces){
     }
     saveFbo.end();
     ofPixels savePixels;
-    saveFbo.getTextureReference().readToPixels(savePixels);
+    saveFbo.getTexture().readToPixels(savePixels);
     if(savePixels.getWidth() > MAX_SAVED_PICTURE_DIMENSION || savePixels.getHeight() > MAX_SAVED_PICTURE_DIMENSION){
         savePixels.resize(MAX_SAVED_PICTURE_DIMENSION, MAX_SAVED_PICTURE_DIMENSION);
     }
