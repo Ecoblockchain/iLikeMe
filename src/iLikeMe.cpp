@@ -2,7 +2,6 @@
 
 using namespace ofxCv;
 
-//--------------------------------------------------------------
 void iLikeMe::setup(){
 	ofSetVerticalSync(true);
 	ofEnableAlphaBlending();
@@ -34,7 +33,6 @@ void iLikeMe::setup(){
 	tracker.setRescale(.5);
 }
 
-//--------------------------------------------------------------
 void iLikeMe::update(){
 	cam.update();
 	if(cam.isFrameNew()) {
@@ -186,7 +184,6 @@ void iLikeMe::drawFace(){
 	}
 }
 
-//--------------------------------------------------------------
 void iLikeMe::draw(){
 	ofBackground(0);
 	ofSetColor(255);
@@ -290,13 +287,6 @@ void iLikeMe::saveImage(int sqrtOfNumberOfFaces){
     ofSaveImage(savePixels, ofToDataPath("imgs/img."+ofToString(ofGetFrameNum())+".png"));
 }
 
-
-//--------------------------------------------------------------
-void iLikeMe::keyPressed(int key){
-	
-}
-
-//--------------------------------------------------------------
 void iLikeMe::keyReleased(int key){
 	tracker.reset();
 	if(key == '-' || key == '_'){
@@ -313,37 +303,11 @@ void iLikeMe::keyReleased(int key){
 	}
 }
 
-//--------------------------------------------------------------
-void iLikeMe::mouseMoved(int x, int y ){
-	
-}
-
-//--------------------------------------------------------------
-void iLikeMe::mouseDragged(int x, int y, int button){
-	
-}
-
-//--------------------------------------------------------------
-void iLikeMe::mousePressed(int x, int y, int button){
-	
-}
-
-//--------------------------------------------------------------
-void iLikeMe::mouseReleased(int x, int y, int button){
-	
-}
-
-//--------------------------------------------------------------
-void iLikeMe::windowResized(int w, int h){
-	
-}
-
-//--------------------------------------------------------------
-void iLikeMe::gotMessage(ofMessage msg){
-	
-}
-
-//--------------------------------------------------------------
-void iLikeMe::dragEvent(ofDragInfo dragInfo){
-	
-}
+void iLikeMe::keyPressed(int key){}
+void iLikeMe::mouseMoved(int x, int y ){}
+void iLikeMe::mouseDragged(int x, int y, int button){}
+void iLikeMe::mousePressed(int x, int y, int button){}
+void iLikeMe::mouseReleased(int x, int y, int button){}
+void iLikeMe::windowResized(int w, int h){}
+void iLikeMe::gotMessage(ofMessage msg){}
+void iLikeMe::dragEvent(ofDragInfo dragInfo){}
