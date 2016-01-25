@@ -2,11 +2,8 @@
 
 from sys import exit
 from os import listdir, remove
-from subprocess import Popen, PIPE
-from string import lowercase
-from random import choice, random
-from re import match, sub
-from time import time, sleep, strftime, localtime
+from re import match
+from time import time, sleep
 from Queue import Queue
 from json import dumps
 from xml.dom import minidom
@@ -14,7 +11,6 @@ from urllib2 import urlopen
 from urllib import urlencode
 from urlparse import parse_qs, urlparse
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from nltk import pos_tag
 import webbrowser
 import facebook
 
@@ -31,24 +27,6 @@ def get_url(path, args=None):
 
 def get(path, args=None):
     return urlopen(get_url(path=path, args=args)).read()
-
-def getPhrasesFromGoogle():
-    phrases = []
-    url = "http://google.com/complete/search?output=toolbar&"
-    query = "everyone will %s"
-    for letter in lowercase:
-        xml = minidom.parseString(urlopen(url+urlencode({'q':query%letter})).read())
-        for suggestion in xml.getElementsByTagName('suggestion'):
-            phrase = sub(r'(will everyone)', 'everyone will', suggestion.attributes['data'].value)
-            taggedText = pos_tag(phrase.split())
-            sawVerb = False
-            phrase = ''
-            for (word,tag) in taggedText:
-                sawVerb |= tag.startswith('VB') and not (('please' in word) or ('everyone' in word))
-                phrase += word+' ' if sawVerb else ''
-            if not phrase == '':
-                phrases.append(sub(r'(lyric(s*))|(quote(s*))', '', phrase))
-    return phrases
 
 def setupOneApp(secrets):
     secrets['REDIRECT_URI'] = 'http://127.0.0.1:8080/'
@@ -80,7 +58,7 @@ def setupOneApp(secrets):
     print "Logging you in to facebook..."
     webbrowser.open(get_url('/oauth/authorize', {'client_id':secrets['APP_ID'],
                                                  'redirect_uri':secrets['REDIRECT_URI'],
-                                                 'scope':'read_stream,publish_actions,publish_stream,photo_upload,user_photos,status_update'}))
+                                                 'scope':'read_stream,publish_actions,user_photos,user_status'}))
 
     while not 'ACCESS_TOKEN' in secrets:
         httpd.handle_request()
@@ -98,7 +76,7 @@ def setup():
     return graphs
 
 def loop():
-    global userName, userId
+    global userName, userId, startTime, currentMinute
     oldAlbum = None
     for f in filter(lambda x: match('^img\.[\w]+\.png$', x), listdir(IMG_DIR)[0:5]):
         graph = graphs.get()
@@ -106,18 +84,20 @@ def loop():
             userName = str(graph.get_object("me")['name'])
         if (userId is None):
             userId = int(graph.get_object("me")['id'])
-        message = "\"In the future, everyone will %s for 15 minutes.\"\n\n--%s"
-        message %= (choice(phrases), userName)
-        if (oldAlbum is not None) and (random() < 0.4):
+        message = "Hello ... only %s seconds left"%(int(900-(time()-startTime)))
+        if (oldAlbum is not None) and (currentMinute == int((time()-startTime)/60)):
             album = oldAlbum
         else:
-            album = graph.put_object("me", "albums", name=str(f), message="album "+str(f))
+            currentMinute = int((time()-startTime)/60)
+            albumName = "minute %s"%currentMinute
+            album = graph.put_object("me", "albums", name=albumName, message=albumName+" album")
             oldAlbum = album
         imgFile = open(IMG_DIR+"/"+f)
         photo = graph.put_photo(image=imgFile,
                                 message=message,
                                 album_id=int(album['id']),
                                 tags=dumps([{'x':50, 'y':50, 'tag_uid':userId}]))
+        graph.put_object(album['id'], "likes")
         graph.put_object(photo['id'], "likes")
         graph.put_object(photo['post_id'], "likes")
 
@@ -126,12 +106,11 @@ def loop():
         graphs.put(graph)
 
 if __name__ == '__main__':
-    phrases = getPhrasesFromGoogle()
     graphs = setup()
-    ##Popen('./iLikeMe.app/Contents/MacOS/iLikeMe', stdout = PIPE, stderr = PIPE)
     startTime = time()
     userName = None
     userId = None
+    currentMinute = 0;
 
     try:
         while(time()-startTime < 900):
