@@ -27,7 +27,6 @@ public:
 	void update();
 	void draw();
 	
-	//void thresholdCam(ofVideoGrabber &in, ofImage &out);
     void thresholdCam(ofxEdsdk::Camera &in, ofImage &out);
 	void makeBlackTransparent(ofxCvGrayscaleImage &in, ofImage &out);
     void saveImage(int sqrtOfNumberOfFaces);
@@ -42,7 +41,6 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 	
-	//ofVideoGrabber cam;
 	ofxEdsdk::Camera mCamera;
     ofVec2f imageDimensions;
 

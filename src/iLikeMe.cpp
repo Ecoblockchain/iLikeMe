@@ -5,22 +5,17 @@ using namespace ofxCv;
 void iLikeMe::setup(){
 	ofSetVerticalSync(true);
 	ofEnableAlphaBlending();
-	//cam.initGrabber(640, 480);
+
 	mCamera.setup();
 	imageDimensions = ofVec2f(mCamera.getWidth()/2, mCamera.getHeight()/2);
 
-	//cImg.allocate(cam.getWidth(),cam.getHeight());
-	//grayDiff.allocate(cam.getWidth(),cam.getHeight());
 	cImg.allocate(imageDimensions.x, imageDimensions.y);
 	grayDiff.allocate(imageDimensions.x, imageDimensions.y);
 	for(int i=0; i<2; ++i){
-		//previousFrames[i].allocate(cam.getWidth(), cam.getHeight());
 		previousFrames[i].allocate(imageDimensions.x, imageDimensions.y);
 	}
 	previousFramesIndex = 0;
 
-	//hairLayer.allocate(cam.getWidth(),cam.getHeight(), OF_IMAGE_COLOR_ALPHA);
-	//printLayer.allocate(cam.getWidth(),cam.getHeight(), OF_IMAGE_COLOR_ALPHA);
 	hairLayer.allocate(imageDimensions.x, imageDimensions.y, OF_IMAGE_COLOR_ALPHA);
 	printLayer.allocate(imageDimensions.x, imageDimensions.y, OF_IMAGE_COLOR_ALPHA);
 	thresholdValue = 40;
@@ -31,10 +26,8 @@ void iLikeMe::setup(){
 	currentColorScheme = ColorScheme::getScheme(0);
 
 	for(int i=0; i<12; ++i){
-		//faceFbos[i].allocate(cam.getWidth(), cam.getHeight());
 		faceFbos[i].allocate(imageDimensions.x, imageDimensions.y);
 	}
-	//mFaceFeatures.cropArea.set(0,0,cam.getWidth(), cam.getHeight());
 	mFaceFeatures.cropArea.set(0,0, imageDimensions.x, imageDimensions.y);
 	scaleFactor = 1;
 
@@ -43,20 +36,16 @@ void iLikeMe::setup(){
 }
 
 void iLikeMe::update(){
-	//cam.update();
 	mCamera.update();
 
-    //if(cam.isFrameNew()) {
     if(mCamera.isFrameNew()) {
 		// face detection
-		//tracker.update(toCv(cam));
 		ofPixels mPix = mCamera.getLivePixels();
 		// resize to ~(640, 480)
 		mPix.resize(imageDimensions.x, imageDimensions.y);
 		tracker.update(toCv(mPix));
 
         // get a copy for the print layer
-		//thresholdCam(cam,printLayer);
 		thresholdCam(mCamera,printLayer);
 
 		// keep previous camera color image as a grayscale cv image
@@ -65,7 +54,6 @@ void iLikeMe::update(){
 		previousFramesIndex = (previousFramesIndex+1)%2;
 
 		// get new camera image
-		//cImg.setFromPixels(cam.getPixels());
 		cImg.setFromPixels(mPix);
 		grayDiff = cImg;
 		//grayDiff.blur();
@@ -123,7 +111,6 @@ void iLikeMe::drawFace(){
 		// draw shapes and color
 		// BACKGROUND
 		ofSetColor(currentColorScheme.background);
-		//ofDrawRectangle(0,0, cam.getWidth(),cam.getHeight());
 		ofDrawRectangle(0,0, imageDimensions.x, imageDimensions.y);
 		
 		// HAIR
@@ -209,7 +196,6 @@ void iLikeMe::draw(){
 	ofSetColor(255);
 
 	ofSetColor(255,255,0);
-	//ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, cam.getHeight()+20);
 	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, imageDimensions.y+20);
 	if(!(ofGetFrameNum()%60)){
 		cout << ofGetFrameRate() << endl;
@@ -262,10 +248,8 @@ void FaceFeatures::blowUpPolyline(ofPolyline &pl){
 }
 
 // destructive: changes incoming img
-//void iLikeMe::thresholdCam(ofVideoGrabber &in, ofImage &out){
 void iLikeMe::thresholdCam(ofxEdsdk::Camera &in, ofImage &out){
     ofPixels op = out.getPixels();
-    //ofPixels ip = in.getPixels();
     ofPixels ip = in.getLivePixels();
 	for(int i=0; i<in.getHeight()*in.getWidth(); ++i){
 		float gray = 0.21*float(ip[i*3+0]) + 0.71*float(ip[i*3+1]) + 0.07*float(ip[i*3+2]);
