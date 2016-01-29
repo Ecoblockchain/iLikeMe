@@ -26,6 +26,7 @@ public:
 	void setup();
 	void update();
 	void draw();
+	void exit();
 	
     void thresholdCam(ofxEdsdk::Camera &in, ofImage &out);
 	void makeBlackTransparent(ofxCvGrayscaleImage &in, ofImage &out);

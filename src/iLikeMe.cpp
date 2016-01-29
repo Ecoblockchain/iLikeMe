@@ -7,7 +7,8 @@ void iLikeMe::setup(){
 	ofEnableAlphaBlending();
 
 	mCamera.setup();
-	imageDimensions = ofVec2f(mCamera.getWidth()/2, mCamera.getHeight()/2);
+	// HACK !
+	imageDimensions = ofVec2f(1056/2, 704/2);
 
 	cImg.allocate(imageDimensions.x, imageDimensions.y);
 	grayDiff.allocate(imageDimensions.x, imageDimensions.y);
@@ -311,3 +312,9 @@ void iLikeMe::keyReleased(int key){
 }
 
 void iLikeMe::keyPressed(int key){}
+
+void iLikeMe::exit(){
+    cout << "exit\n";
+    mCamera.close();
+    ofBaseApp::exit();
+}
