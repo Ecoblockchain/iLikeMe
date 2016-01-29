@@ -4,6 +4,7 @@
 #include "ofxCv.h"
 #include "ofxOpenCv.h"
 #include "ofxFaceTracker.h"
+#include "ofxEdsdk.h"
 #include "ColorScheme.h"
 
 #define MAX_SAVED_PICTURE_DIMENSION 900
@@ -41,6 +42,7 @@ public:
 	void gotMessage(ofMessage msg);
 	
 	ofVideoGrabber cam;
+	ofxEdsdk::Camera mCamera;
 
 	ofxCvColorImage cImg;
 	ofxCvGrayscaleImage grayDiff;

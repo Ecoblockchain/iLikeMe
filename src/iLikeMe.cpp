@@ -6,6 +6,7 @@ void iLikeMe::setup(){
 	ofSetVerticalSync(true);
 	ofEnableAlphaBlending();
 	cam.initGrabber(640, 480);
+	//mCamera.setup();
 
 	cImg.allocate(cam.getWidth(),cam.getHeight());
 	grayDiff.allocate(cam.getWidth(),cam.getHeight());
@@ -35,10 +36,18 @@ void iLikeMe::setup(){
 
 void iLikeMe::update(){
 	cam.update();
-	if(cam.isFrameNew()) {
+	//mCamera.update();
+
+    if(cam.isFrameNew()) {
+    // if(mCamera.isFrameNew()) {
 		// face detection
 		tracker.update(toCv(cam));
-		// get a copy for the print layer
+        //ofPixels mPix = mCamera.getLivePixels();
+        // resize to ~(640, 480)
+        //mPix.resize(<#int dstWidth#>, <#int dstHeight#>);
+        //tracker.update(toCv(mPix));
+
+        // get a copy for the print layer
 		thresholdCam(cam,printLayer);
 
 		// keep previous camera color image as a grayscale cv image
@@ -48,6 +57,7 @@ void iLikeMe::update(){
 
 		// get new camera image
 		cImg.setFromPixels(cam.getPixels());
+        //cImg.setFromPixels(mPix);
 		grayDiff = cImg;
 		//grayDiff.blur();
 
