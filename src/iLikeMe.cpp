@@ -207,7 +207,7 @@ void iLikeMe::draw(){
     imgsDir.open(ofToDataPath("imgs"));
     imgsDir.allowExt("png");
     imgsDir.listDir();
-    if((ofGetElapsedTimeMillis() - lastSavedTime > 1000) && (imgsDir.size() < 12) && tracker.getFound()){
+    if((ofGetElapsedTimeMillis() - lastSavedTime > 1100) && (imgsDir.size() < 12) && tracker.getFound()){
         saveImage((int)(ofClamp(abs(ofRandom(-2.0, 10.0)), 1.0, 10.0)));
         lastSavedTime = ofGetElapsedTimeMillis();
     }
@@ -284,7 +284,7 @@ void iLikeMe::saveImage(int sqrtOfNumberOfFaces){
     if(savePixels.getWidth() > MAX_SAVED_PICTURE_DIMENSION || savePixels.getHeight() > MAX_SAVED_PICTURE_DIMENSION){
         savePixels.resize(MAX_SAVED_PICTURE_DIMENSION, MAX_SAVED_PICTURE_DIMENSION);
     }
-    ofSaveImage(savePixels, ofToDataPath("imgs/img."+ofToString(ofGetFrameNum())+".png"));
+    ofSaveImage(savePixels, ofToDataPath("imgs/img."+ofToString(ofGetUnixTime())+".png"));
 }
 
 void iLikeMe::keyReleased(int key){
