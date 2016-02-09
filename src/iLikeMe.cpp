@@ -38,7 +38,7 @@ void iLikeMe::update(){
 	if(cam.isFrameNew()) {
 		// face detection
 		ofPixels mPix = cam.getPixels();
-		tracker.update(toCv(cam));
+		tracker.update(toCv(mPix));
 		// get a copy for the print layer
 		thresholdCam(mPix,printLayer);
 
@@ -296,10 +296,10 @@ void iLikeMe::keyReleased(int key){
 		thresholdValue = min(thresholdValue+1, 255);
 	}
 	if(key == 356){
-		scaleFactor = max(scaleFactor-1, 0);
+		scaleFactor = max(scaleFactor-1, 1);
 	}
 	if(key == 358){
-		scaleFactor = min(scaleFactor+1, 255);
+		scaleFactor = min(scaleFactor+1, 10);
 	}
 }
 
