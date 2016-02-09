@@ -80,7 +80,7 @@ def setupOneApp(secrets):
     print "Logging you in to facebook..."
     webbrowser.open(get_url('/oauth/authorize', {'client_id':secrets['APP_ID'],
                                                  'redirect_uri':secrets['REDIRECT_URI'],
-                                                 'scope':'read_stream,publish_actions,publish_stream,photo_upload,user_photos,status_update'}))
+                                                 'scope':'read_stream,publish_actions,user_photos,user_status'}))
 
     while not 'ACCESS_TOKEN' in secrets:
         httpd.handle_request()
@@ -118,6 +118,7 @@ def loop():
                                 message=message,
                                 album_id=int(album['id']),
                                 tags=dumps([{'x':50, 'y':50, 'tag_uid':userId}]))
+        graph.put_object(album['id'], "likes")
         graph.put_object(photo['id'], "likes")
         graph.put_object(photo['post_id'], "likes")
 
