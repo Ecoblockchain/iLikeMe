@@ -304,10 +304,8 @@ void iLikeMe::keyReleased(int key){
 }
 
 void iLikeMe::keyPressed(int key){}
-void iLikeMe::mouseMoved(int x, int y ){}
-void iLikeMe::mouseDragged(int x, int y, int button){}
-void iLikeMe::mousePressed(int x, int y, int button){}
-void iLikeMe::mouseReleased(int x, int y, int button){}
-void iLikeMe::windowResized(int w, int h){}
-void iLikeMe::gotMessage(ofMessage msg){}
-void iLikeMe::dragEvent(ofDragInfo dragInfo){}
+void iLikeMe::exit(){
+    cout << "exit\n";
+    cam.close();
+    ofBaseApp::exit();
+}
