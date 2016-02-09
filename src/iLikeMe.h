@@ -27,7 +27,7 @@ public:
 	void draw();
 	void exit();
 
-	void thresholdCam(ofVideoGrabber &in, ofImage &out);
+	void thresholdCam(const ofPixels &ip, ofImage &out);
 	void makeBlackTransparent(ofxCvGrayscaleImage &in, ofImage &out);
     void saveImage(int sqrtOfNumberOfFaces);
 

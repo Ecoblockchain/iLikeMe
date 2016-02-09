@@ -37,9 +37,10 @@ void iLikeMe::update(){
 	cam.update();
 	if(cam.isFrameNew()) {
 		// face detection
+		ofPixels mPix = cam.getPixels();
 		tracker.update(toCv(cam));
 		// get a copy for the print layer
-		thresholdCam(cam,printLayer);
+		thresholdCam(mPix,printLayer);
 
 		// keep previous camera color image as a grayscale cv image
 		previousFrames[previousFramesIndex] = cImg;
@@ -47,7 +48,7 @@ void iLikeMe::update(){
 		previousFramesIndex = (previousFramesIndex+1)%2;
 
 		// get new camera image
-		cImg.setFromPixels(cam.getPixels());
+		cImg.setFromPixels(mPix);
 		grayDiff = cImg;
 		//grayDiff.blur();
 
@@ -241,10 +242,9 @@ void FaceFeatures::blowUpPolyline(ofPolyline &pl){
 }
 
 // destructive: changes incoming img
-void iLikeMe::thresholdCam(ofVideoGrabber &in, ofImage &out){
+void iLikeMe::thresholdCam(const ofPixels &ip, ofImage &out){
     ofPixels op = out.getPixels();
-    ofPixels ip = in.getPixels();
-	for(int i=0; i<in.getHeight()*in.getWidth(); ++i){
+	for(int i=0; i<ip.getHeight()*ip.getWidth(); ++i){
 		float gray = 0.21*float(ip[i*3+0]) + 0.71*float(ip[i*3+1]) + 0.07*float(ip[i*3+2]);
 		op[i*4+0] = op[i*4+1] = op[i*4+2] = (gray < thresholdValue)?255:0;
 		op[i*4+3] = (gray < thresholdValue)?255:0;
