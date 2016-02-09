@@ -42,7 +42,7 @@ public:
 	unsigned int previousFramesIndex;
 
 	ofImage printLayer, hairLayer;
-	unsigned char thresholdValue;
+	int thresholdValue;
 
 	long long int lastFaceTime, lastSavedTime;
     ofDirectory imgsDir;
@@ -51,7 +51,7 @@ public:
 
 	ofFbo faceFbos[12];
 	FaceFeatures mFaceFeatures;
-	unsigned int scaleFactor;
+	int scaleFactor;
 
 	ofxFaceTracker tracker;
 

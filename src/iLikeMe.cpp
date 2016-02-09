@@ -290,16 +290,16 @@ void iLikeMe::saveImage(int sqrtOfNumberOfFaces){
 void iLikeMe::keyReleased(int key){
 	tracker.reset();
 	if(key == '-' || key == '_'){
-		thresholdValue = (thresholdValue>0)?(thresholdValue-1):thresholdValue;
+		thresholdValue = max(thresholdValue-1, 0);
 	}
 	if(key == '+' || key == '='){
-		thresholdValue = (thresholdValue<255)?(thresholdValue+1):thresholdValue;
+		thresholdValue = min(thresholdValue+1, 255);
 	}
 	if(key == 356){
-		scaleFactor = (scaleFactor>1)?(scaleFactor-1):scaleFactor;
+		scaleFactor = max(scaleFactor-1, 0);
 	}
 	if(key == 358){
-		scaleFactor = (scaleFactor<10)?(scaleFactor+1):scaleFactor;
+		scaleFactor = min(scaleFactor+1, 255);
 	}
 }
 
